@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "556017286008",
+    "firebase_url": "https://health-care-d5deb-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "health-care-d5deb",
+    "storage_bucket": "health-care-d5deb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556017286008:android:dd28b3142beb69d30da68d",
+        "android_client_info": {
+          "package_name": "com.fyp.healthcare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556017286008-iqe7rm9u97958odn3e9msl75nqn07389.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fyp.healthcare",
+            "certificate_hash": "a54b1be832efac78d0bebb8fca78c8700e1189f1"
+          }
+        },
+        {
+          "client_id": "556017286008-b91tupnq72m46gf6vplcppatds3ii0jg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcTH_MQrpeA3O9kA3ov1XVE4twRPZDsuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556017286008-b91tupnq72m46gf6vplcppatds3ii0jg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556017286008:android:69404a42db46fae00da68d",
+        "android_client_info": {
+          "package_name": "com.healthcare_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556017286008-7mb5fjk5et8v9he623jbii8eu8grv2qr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healthcare_app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "556017286008-b91tupnq72m46gf6vplcppatds3ii0jg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcTH_MQrpeA3O9kA3ov1XVE4twRPZDsuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556017286008-b91tupnq72m46gf6vplcppatds3ii0jg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

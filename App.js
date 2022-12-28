@@ -14,6 +14,7 @@ import LoginScreen from './src/Screens/LoginScreen';
 import RegisterScreen from './src/Screens/RegisterScreen';
 import LoadingScreen from './src/Screens/LoadingScreen';
 import DrawerContent from './src/Screens/DrawerContent';
+import Patient from './src/Screens/Patient';
 import Home from './src/Screens/Home';
 import Icon from 'react-native-vector-icons/Ionicons';
 //const Drawer = createDrawerNavigator();
@@ -39,7 +40,7 @@ const CreateHomeStack = ({ navigation }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
+        name="home"
         component={Home}
         options={{
           headerTitleAlign: 'center',
@@ -58,12 +59,28 @@ const CreateHomeStack = ({ navigation }) => {
           )
         }}
       />
+      <Stack.Screen
+        name="Patient"
+        component={Patient}
+        options={{
+          headerTitleAlign: 'center',
+          title: 'Details',
+          headerTintColor: '#FFFFFF',
+          headerStyle: {
+            backgroundColor: 'teal',
+          },
+          headerLeft: () => (
+            <Icon.Button
+              name="chevron-back"
+              size={25}
+              backgroundColor="teal"
+              onPress={() => navigation.navigate('home')}>
+            </Icon.Button>
+          )
+        }}
+      />
     </Stack.Navigator>
   )
-}
-
-function Homescreen() {
-  return <Text>Home</Text>
 }
 
 const App = () => {
@@ -74,7 +91,7 @@ const App = () => {
       <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
         <Drawer.Screen name="Loading" component={LoadingScreen} />
         <Drawer.Screen name="Auth" component={CreateAuthStack} />
-        <Drawer.Screen name="Home" component={CreateHomeStack} />
+        <Drawer.Screen name="Home" children={CreateHomeStack} />
       </Drawer.Navigator>
 
     </NavigationContainer>

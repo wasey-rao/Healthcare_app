@@ -12,16 +12,13 @@ import firestore from '@react-native-firebase/firestore'
 import { ActivityIndicator } from 'react-native-paper';
 
 
-export default SearchScreen = (props) => {
+const Home = ({navigation}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const showPatient = item => {
-    Database.shared.searchDetail(item).then(() => {
-      this.props.navigation.navigate('SearchedDonor', {
-        item: item,
-        User: this.state.User,
-      });
+    navigation.navigate('Patient', {
+      key: item,
     });
   };
 
@@ -47,7 +44,7 @@ export default SearchScreen = (props) => {
     return () => subscriber();
   }, []);
 
-  renderitem = item => {
+  const renderitem = item => {
     if (loading) {
       return (
         <ActivityIndicator size="large" color="blue" />
@@ -84,7 +81,7 @@ export default SearchScreen = (props) => {
           </View>
 
           <View style={styles.button}>
-            <TouchableOpacity onPress={() => this.showDonor(item)}>
+            <TouchableOpacity onPress={()=>showPatient(item.key)}>
               <LinearGradient
                 colors={['teal', '#014d4e']}
                 style={styles.signIn}>
@@ -104,7 +101,7 @@ export default SearchScreen = (props) => {
       <FlatList
         style={styles.feeds}
         data={data}
-        renderItem={({ item }) => this.renderitem(item)}
+        renderItem={({ item }) => renderitem(item)}
         keyExtractor={item => item.key}
         showsVerticalScrollIndicator={true}
       />
@@ -135,6 +132,8 @@ export default SearchScreen = (props) => {
   );
 
 }
+
+export default Home;
 
 const styles = StyleSheet.create({
   container: {

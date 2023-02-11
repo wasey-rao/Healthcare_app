@@ -5,6 +5,8 @@ import Chart from '../Components/Charts';
 import React, { useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore'
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Checkbox } from 'react-native-paper';
+import { Dimensions } from 'react-native';
 
 
 const chartConfig = {
@@ -26,16 +28,25 @@ const chartConfig = {
 
 const Patient = ({ route }) => {
     const { key } = route.params;
+    const [wid, setWidth] = React.useState(Dimensions.get('window').width);
     const [patient, setPatient] = useState({});
     const [temp, setTemp] = useState([0]);
+    const [snore, setSnore] = useState([0]);
+    const [gsr, setGSR] = useState([0]);
 
     useEffect(() => {
+        Dimensions.addEventListener('change', () => {
+            setWidth(Dimensions.get('window').width);
+        })
+
         const subscriber = firestore()
             .collection('users')
             .doc(key)
             .onSnapshot(documentSnapshot => {
                 console.log('User: ', documentSnapshot.data());
                 setTemp([...temp, temp.push(documentSnapshot.data().temperature)].slice(Math.max(temp.length - 5, 0)));
+                setSnore([...snore, snore.push(documentSnapshot.data().snore_voltages)].slice(Math.max(snore.length - 5, 0)));
+                setGSR([...gsr, gsr.push( documentSnapshot.data().resistive_voltages)].slice(Math.max(gsr.length - 5, 0)));
                 setPatient(documentSnapshot.data());
                 console.log('temp', temp)
             });
@@ -48,11 +59,28 @@ const Patient = ({ route }) => {
         labels: [],
         datasets: [
             {
-                data: []
+                data: temp
             },
         ],
     };
-    data.datasets[0].data = temp;
+    let snoreData = {
+        labels: [],
+        datasets: [
+            {
+                data: snore
+            },
+        ],
+    };
+    let gsrData = {
+        labels: [],
+        datasets: [
+            {
+                data: gsr
+            },
+        ],
+    };
+    // data.datasets[0].data = temp;
+    // snoreData.datasets[0].data = snore;
     return (
         // <View style={styles.container}>
         //     <View style={styles.cards}>
@@ -67,6 +95,23 @@ const Patient = ({ route }) => {
         <ScrollView>
             <View style={styles.container}>
                 <Text style={styles.userName}>{patient.displayName}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ color: 'black', marginTop: 8 }}>Mark Patient Critical</Text>
+                    <Checkbox
+                        status={patient.priority ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                            firestore()
+                                .collection('users')
+                                .doc(key)
+                                .update({
+                                    priority: !patient.priority,
+                                })
+                                .then(() => {
+                                    console.log('User updated!');
+                                });
+                        }}
+                    />
+                </View>
                 <View style={styles.cardContainer}>
 
                     <ScrollView horizontal={true}>
@@ -82,10 +127,10 @@ const Patient = ({ route }) => {
                             icon="thermometer"
                             color={"red"}
                         />
-                        <Cards
+                        {/* <Cards
                             title="Card 3"
                             content={'supine'}
-                        />
+                        /> */}
                     </ScrollView>
                 </View>
                 <View style={styles.chartContainer}>
@@ -93,14 +138,54 @@ const Patient = ({ route }) => {
                         <Icon name="thermometer" size={20} color="red" />
                         <Text style={styles.cardText}>Temperature</Text>
                     </View>
-                    <Chart data={data} chartConfig={chartConfig} />
+                    {/* <Chart data={data} chartConfig={chartConfig} /> */}
+                    <LineChart
+                        data={data}
+                        width={wid / 1.06}
+                        height={220}
+                        chartConfig={chartConfig}
+                        bezier
+                        style={{
+                            marginVertical: 8,
+                            borderRadius: 16,
+                        }}
+                    />
                 </View>
                 <View style={styles.chartContainer}>
                     <View style={{ flexDirection: 'row' }}>
                         <Image source={require('../assets/breath.png')} style={{ width: 20, height: 20 }} />
                         <Text style={styles.cardText}>Snore</Text>
                     </View>
-                    <Chart data={data} chartConfig={chartConfig} />
+                    {/* <Chart data={snoreData} chartConfig={chartConfig} /> */}
+                    <LineChart
+                        data={snoreData}
+                        width={wid / 1.06}
+                        height={220}
+                        chartConfig={chartConfig}
+                        bezier
+                        style={{
+                            marginVertical: 8,
+                            borderRadius: 16,
+                        }}
+                    />
+                </View>
+                <View style={styles.chartContainer}>
+                    <View style={{ flexDirection: 'row' }}>
+                        {/* <Image source={require('../assets/breath.png')} style={{ width: 20, height: 20 }} /> */}
+                        <Text style={styles.cardText}>GSR</Text>
+                    </View>
+                    {/* <Chart data={snoreData} chartConfig={chartConfig} /> */}
+                    <LineChart
+                        data={gsrData}
+                        width={wid / 1.06}
+                        height={220}
+                        chartConfig={chartConfig}
+                        bezier
+                        style={{
+                            marginVertical: 8,
+                            borderRadius: 16,
+                        }}
+                    />
                 </View>
 
             </View>

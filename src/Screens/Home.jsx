@@ -6,15 +6,43 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
+  BackHandler,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import firestore from '@react-native-firebase/firestore'
-import { ActivityIndicator } from 'react-native-paper';
+import messaging from '@react-native-firebase/messaging';
+import notifee from '@notifee/react-native';
 
-
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const criticalTemperature = 37.0;
+
+  const onDisplayNotification = async (item) => {
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+    });
+
+    await notifee.displayNotification({
+      title: 'Critical Temperature',
+      body: 'Patient ' + item.displayName + ' has a critical temperature of ' + item.temperature,
+      android: {
+        channelId,
+        smallIcon: 'ic_launcher',
+        color: 'red',
+        priority: 'max',
+        vibrate: true,
+        //visibility: 'public',
+        // importance: 'high',
+        autoCancel: true,
+        sound: 'default',
+      },
+    });
+  };
+
 
   const showPatient = item => {
     navigation.navigate('Patient', {
@@ -28,20 +56,41 @@ const Home = ({navigation}) => {
       .onSnapshot(querySnapshot => {
         const users = [];
 
-        querySnapshot.forEach(documentSnapshot => {
+        querySnapshot?.forEach(documentSnapshot => {
           users.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
         });
 
-        setData(users);
+        setData([...users].sort((a, b) => a.priority === b.priority ? 0 : a.priority ? -1 : 1 ));
         console.log(users)
         setLoading(false);
       });
 
+      const backAction = () => {
+        if (navigation.isFocused()) {
+        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel"
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() }
+        ]);
+        return true;
+      }
+      };
+  
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+  
+      return () => {backHandler.remove(), subscriber()};
+
     // Unsubscribe from events when no longer in use
-    return () => subscriber();
+    //return () => subscriber();
   }, []);
 
   const renderitem = item => {
@@ -50,6 +99,9 @@ const Home = ({navigation}) => {
         <ActivityIndicator size="large" color="blue" />
       )
     } else {
+      if (item.temperature >= criticalTemperature) {
+        onDisplayNotification(item);
+      }
       return (
         //<View style={{flexDirection:'row'}}>
         <View style={styles.feed}>
@@ -81,7 +133,7 @@ const Home = ({navigation}) => {
           </View>
 
           <View style={styles.button}>
-            <TouchableOpacity onPress={()=>showPatient(item.key)}>
+            <TouchableOpacity onPress={() => showPatient(item.key)}>
               <LinearGradient
                 colors={['teal', '#014d4e']}
                 style={styles.signIn}>
@@ -109,9 +161,7 @@ const Home = ({navigation}) => {
         <TouchableOpacity
           style={styles.signIn1}
           onPress={() =>
-            this.props.navigation.navigate('RequestForm', {
-              User: this.state.User,
-            })
+            navigation.navigate('AddPatient')
           }>
           <LinearGradient
             colors={['teal', '#014d4e']}

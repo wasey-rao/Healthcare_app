@@ -16,6 +16,7 @@ import LoadingScreen from './src/Screens/LoadingScreen';
 import DrawerContent from './src/Screens/DrawerContent';
 import Patient from './src/Screens/Patient';
 import Home from './src/Screens/Home';
+import AddPatient from './src/Screens/AddPatient';
 import Icon from 'react-native-vector-icons/Ionicons';
 //const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -31,7 +32,12 @@ const CreateAuthStack = (props) => {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen
+        name="Register"
+        options={{
+          headerShown: false,
+        }}
+        component={RegisterScreen} />
     </Stack.Navigator>
   )
 }
@@ -65,6 +71,26 @@ const CreateHomeStack = ({ navigation }) => {
         options={{
           headerTitleAlign: 'center',
           title: 'Details',
+          headerTintColor: '#FFFFFF',
+          headerStyle: {
+            backgroundColor: 'teal',
+          },
+          headerLeft: () => (
+            <Icon.Button
+              name="chevron-back"
+              size={25}
+              backgroundColor="teal"
+              onPress={() => navigation.navigate('home')}>
+            </Icon.Button>
+          )
+        }}
+      />
+      <Stack.Screen
+        name="AddPatient"
+        component={AddPatient}
+        options={{
+          headerTitleAlign: 'center',
+          title: 'Add Patient',
           headerTintColor: '#FFFFFF',
           headerStyle: {
             backgroundColor: 'teal',

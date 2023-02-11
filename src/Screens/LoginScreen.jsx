@@ -33,20 +33,22 @@ const LoginScreen = ({ navigation }) => {
     const handleLogin = () => {
         const { email, password } = data;
         if (email === '') {
-            setState({errorMessage: 'Please enter email!'});
+            setState({ errorMessage: 'Please enter email!' });
             alert('Please enter email!');
-          } else if (password === '') {
-            setState({errorMessage: 'Please enter password!'});
+        } else if (password === '') {
+            setState({ errorMessage: 'Please enter password!' });
             alert('Please enter password!');
-          } else {
+        } else {
             auth()
-              .signInWithEmailAndPassword(email, password).then(()=>{
-                navigation.navigate('Home');
-              })
-              .catch(error => {
-                setState({errorMessage: error.message});
-              });
-          }
+                .signInWithEmailAndPassword(email, password).then(() => {
+                    console.log("Signed in");
+                    navigation.navigate('Home');
+                })
+                .catch(error => {
+                    setState({ errorMessage: error.message });
+                    console.log('ErrorMessage: ', error.message);
+                });
+        }
     }
 
 
@@ -150,6 +152,14 @@ const LoginScreen = ({ navigation }) => {
                                     {'LOGIN'}
                                 </Text>
                             </LinearGradient>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ alignSelf: 'center', marginTop: 32 }}
+                            onPress={() => navigation.navigate('Register')}>
+                            <Text style={{ color: '#3399ff', fontSize: 14 }}>
+                                Don't have an Account?{' '}
+                                <Text style={{ fontWeight: '500', color: 'lightblue' }}>Register</Text>
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

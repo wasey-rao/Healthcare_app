@@ -50,8 +50,8 @@ export default function DrawerContent(props) {
             <View style={{ flexDirection: 'row', marginTop: 15, marginHorizontal: 70 }}>
               <Image
                 style={styles.image}
-              //source={require('../assets/app_icon_round.png')}
-              //resizeMode={"cover"} // <- needs to be "cover" for borderRadius to take effect on Android
+              source={require('../assets/icon.png')}
+              resizeMode={"cover"} // <- needs to be "cover" for borderRadius to take effect on Android
               />
               {/* <Avatar.Image
                 source={
@@ -87,10 +87,10 @@ export default function DrawerContent(props) {
               )}
               label={() => <Text style={{ color: 'grey', fontSize: 16 }}>Home</Text>}
               onPress={() => {
-                props.navigation.navigate('Home1');
+                props.navigation.navigate('Home');
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={({ color, size }) => (
                 <Icon name="account-outline" color={'teal'} size={size} />
               )}
@@ -98,7 +98,7 @@ export default function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate('Profile');
               }}
-            />
+            /> */}
             {/* <DrawerItem
               icon={({ color, size }) => (
                 <Icon name="phone" color={'#b20404'} size={size} />

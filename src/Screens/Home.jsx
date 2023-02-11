@@ -6,22 +6,47 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
+  BackHandler,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import firestore from '@react-native-firebase/firestore'
-import { ActivityIndicator } from 'react-native-paper';
+import messaging from '@react-native-firebase/messaging';
+import notifee from '@notifee/react-native';
 
-
-export default SearchScreen = (props) => {
+const Home = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const criticalTemperature = 37.0;
+
+  const onDisplayNotification = async (item) => {
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+    });
+
+    await notifee.displayNotification({
+      title: 'Critical Temperature',
+      body: 'Patient ' + item.displayName + ' has a critical temperature of ' + item.temperature,
+      android: {
+        channelId,
+        smallIcon: 'ic_launcher',
+        color: 'red',
+        priority: 'max',
+        vibrate: true,
+        //visibility: 'public',
+        // importance: 'high',
+        autoCancel: true,
+        sound: 'default',
+      },
+    });
+  };
+
 
   const showPatient = item => {
-    Database.shared.searchDetail(item).then(() => {
-      this.props.navigation.navigate('SearchedDonor', {
-        item: item,
-        User: this.state.User,
-      });
+    navigation.navigate('Patient', {
+      key: item,
     });
   };
 
@@ -31,28 +56,52 @@ export default SearchScreen = (props) => {
       .onSnapshot(querySnapshot => {
         const users = [];
 
-        querySnapshot.forEach(documentSnapshot => {
+        querySnapshot?.forEach(documentSnapshot => {
           users.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
         });
 
-        setData(users);
+        setData([...users].sort((a, b) => a.priority === b.priority ? 0 : a.priority ? -1 : 1 ));
         console.log(users)
         setLoading(false);
       });
 
+      const backAction = () => {
+        if (navigation.isFocused()) {
+        Alert.alert("Hold on!", "Are you sure you want to go back?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel"
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() }
+        ]);
+        return true;
+      }
+      };
+  
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+  
+      return () => {backHandler.remove(), subscriber()};
+
     // Unsubscribe from events when no longer in use
-    return () => subscriber();
+    //return () => subscriber();
   }, []);
 
-  renderitem = item => {
+  const renderitem = item => {
     if (loading) {
       return (
         <ActivityIndicator size="large" color="blue" />
       )
     } else {
+      if (item.temperature >= criticalTemperature) {
+        onDisplayNotification(item);
+      }
       return (
         //<View style={{flexDirection:'row'}}>
         <View style={styles.feed}>
@@ -84,7 +133,7 @@ export default SearchScreen = (props) => {
           </View>
 
           <View style={styles.button}>
-            <TouchableOpacity onPress={() => this.showDonor(item)}>
+            <TouchableOpacity onPress={() => showPatient(item.key)}>
               <LinearGradient
                 colors={['teal', '#014d4e']}
                 style={styles.signIn}>
@@ -104,7 +153,7 @@ export default SearchScreen = (props) => {
       <FlatList
         style={styles.feeds}
         data={data}
-        renderItem={({ item }) => this.renderitem(item)}
+        renderItem={({ item }) => renderitem(item)}
         keyExtractor={item => item.key}
         showsVerticalScrollIndicator={true}
       />
@@ -112,9 +161,7 @@ export default SearchScreen = (props) => {
         <TouchableOpacity
           style={styles.signIn1}
           onPress={() =>
-            this.props.navigation.navigate('RequestForm', {
-              User: this.state.User,
-            })
+            navigation.navigate('AddPatient')
           }>
           <LinearGradient
             colors={['teal', '#014d4e']}
@@ -135,6 +182,8 @@ export default SearchScreen = (props) => {
   );
 
 }
+
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
